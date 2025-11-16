@@ -1,16 +1,24 @@
-import { NextRequest, NextResponse } from 'next/server';
-import prisma from '@/lib/prisma';
+import { NextRequest, NextResponse } from "next/server";
+import prisma from "@/lib/prisma";
 
-export async function GET(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
+export async function GET(
+  request: NextRequest,
+  { params }: { params: { id: string } }
+) {
   try {
-    const { id } = await params;
+    const { id } = params;
+
     const registrations = await prisma.registration.findMany({
       where: { picnicId: id },
-      orderBy: { createdAt: 'desc' },
+      orderBy: { createdAt: "desc" },
     });
+
     return NextResponse.json(registrations);
   } catch (error) {
-    console.error('Error fetching registrations:', error);
-    return NextResponse.json({ error: 'Failed to fetch registrations' }, { status: 500 });
+    console.error("Error fetching registrations:", error);
+    return NextResponse.json(
+      { error: "Failed to fetch registrations" },
+      { status: 500 }
+    );
   }
 }
