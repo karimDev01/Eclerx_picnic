@@ -1,0 +1,46 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Picnic {
+  id                    String         @id @default(cuid())
+  title                 String
+  description           String
+  price                 Int
+  startDate             DateTime
+  endDate               DateTime
+  maxPeople             Int
+  registrationDeadline  DateTime
+  upiId                 String
+  adminId               String
+  createdAt             DateTime       @default(now())
+  updatedAt             DateTime       @updatedAt
+  registrations         Registration[]
+
+  @@index([adminId])
+}
+
+model Registration {
+  id              String   @id @default(cuid())
+  picnicId        String
+  picnic          Picnic   @relation(fields: [picnicId], references: [id], onDelete: Cascade)
+  name            String
+  email           String
+  phone           String
+  upiId           String
+  status          String   @default("pending") // pending, approved, rejected
+  rejectionReason String?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  @@index([picnicId])
+  @@index([email])
+}
