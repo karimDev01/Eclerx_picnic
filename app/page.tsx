@@ -109,14 +109,7 @@ export default function Home() {
 
           {/* Video 2 */}
           <div className="relative w-full pb-[56.25%] rounded-xl overflow-hidden shadow-lg bg-neutral-800">
-            <iframe
-              className="absolute top-0 left-0 w-full h-full"
-              src="https://www.youtube.com/embed/AkdDBUZQB8E?si=b5bRXalxqqVwcDCH"
-              title="YouTube video player"
-              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-              referrerPolicy="strict-origin-when-cross-origin"
-              allowFullScreen
-            ></iframe>
+            <iframe  className="absolute top-0 left-0 w-full h-full" width="560" height="315" src="https://www.youtube.com/embed/jwRXSDWBiOM?si=TBARZ9gd_ZkyPnSk" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
           </div>
         </section>
 
