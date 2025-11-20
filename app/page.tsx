@@ -94,6 +94,31 @@ export default function Home() {
             </Card>
           </div>
         </section>
+        <section className="grid grid-cols-1 md:grid-cols-2 gap-6 p-4">
+          {/* Video 1 */}
+          <div className="relative w-full pb-[56.25%] rounded-xl overflow-hidden shadow-lg bg-neutral-800">
+            <iframe
+              className="absolute top-0 left-0 w-full h-full"
+              src="https://www.youtube.com/embed/wDIF7B8KTWg?si=jh-cM3MYUVCGtS8X"
+              title="YouTube video player"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+              referrerPolicy="strict-origin-when-cross-origin"
+              allowFullScreen
+            ></iframe>
+          </div>
+
+          {/* Video 2 */}
+          <div className="relative w-full pb-[56.25%] rounded-xl overflow-hidden shadow-lg bg-neutral-800">
+            <iframe
+              className="absolute top-0 left-0 w-full h-full"
+              src="https://www.youtube.com/embed/AkdDBUZQB8E?si=b5bRXalxqqVwcDCH"
+              title="YouTube video player"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+              referrerPolicy="strict-origin-when-cross-origin"
+              allowFullScreen
+            ></iframe>
+          </div>
+        </section>
 
         {/* Picnics Grid */}
         {loading ? (
