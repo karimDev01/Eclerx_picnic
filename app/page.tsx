@@ -43,9 +43,44 @@ export default function Home() {
             <h1 className="text-2xl font-bold">Picnic Hub</h1>
             <p className="text-xs text-muted-foreground">Discover & book amazing picnic events</p>
           </div>
-          <Link href="/admin">
-            <Button variant="outline" size="sm">Admin Panel</Button>
-          </Link>
+          <div className='flex gap-3 items-center'>
+
+            <Link href="/developer">
+              <div className="relative group inline-block">
+                {/* Aura Glow */}
+                <div className="
+      absolute inset-0 
+      rounded-xl 
+      blur-xl 
+      opacity-50 
+      bg-gradient-to-r from-purple-500 via-blue-500 to-cyan-400
+      group-hover:blur-2xl group-hover:opacity-80
+      transition-all duration-500
+    " />
+
+                {/* Actual Button */}
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="
+        relative z-10 
+        backdrop-blur-sm 
+        border-white/40 
+        
+        transition-all 
+        duration-300 
+        hover:border-white hover:shadow-lg
+      "
+                >
+                  Show Aura
+                </Button>
+              </div>
+            </Link>
+
+            <Link href="/admin">
+              <Button variant="outline" size="sm">Admin Panel</Button>
+            </Link>
+          </div>
         </div>
       </nav>
 
@@ -109,7 +144,7 @@ export default function Home() {
 
           {/* Video 2 */}
           <div className="relative w-full pb-[56.25%] rounded-xl overflow-hidden shadow-lg bg-neutral-800">
-            <iframe  className="absolute top-0 left-0 w-full h-full" width="560" height="315" src="https://www.youtube.com/embed/jwRXSDWBiOM?si=TBARZ9gd_ZkyPnSk" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+            <iframe className="absolute top-0 left-0 w-full h-full" width="560" height="315" src="https://www.youtube.com/embed/jwRXSDWBiOM?si=TBARZ9gd_ZkyPnSk" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
           </div>
         </section>
 
