@@ -8,25 +8,24 @@ const _geist = Geist({ subsets: ["latin"] });
 const _geistMono = Geist_Mono({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: 'v0 App',
-  description: 'Created with v0',
-  generator: 'v0.app',
+  title: 'Eclerx Picnics',
+  description: 'Eclerx Picnic Register yourself be the part and enjoy .',
   icons: {
     icon: [
       {
-        url: '/icon-light-32x32.png',
+        url: '/eclerx.png',
         media: '(prefers-color-scheme: light)',
       },
       {
-        url: '/icon-dark-32x32.png',
+        url: '/eclerx.png',
         media: '(prefers-color-scheme: dark)',
       },
       {
-        url: '/icon.svg',
+        url: '/eclerx.png',
         type: 'image/svg+xml',
       },
     ],
-    apple: '/apple-icon.png',
+    apple: '/eclerx.png',
   },
 }
 
