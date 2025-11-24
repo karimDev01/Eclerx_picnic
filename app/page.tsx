@@ -10,66 +10,99 @@ import { Input } from '@/components/ui/input';
 import { Calendar, Users, MapPin } from 'lucide-react';
 import { toast } from "sonner";
 export default function Home() {
+
+  const [registrations, setRegistrations] = useState<any[]>([]);
+  const [picnics, setPicnics] = useState<(Picnic & { participantCount?: number })[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [searchTerm, setSearchTerm] = useState('');
+  const total = picnics.reduce((sum, p) => sum + (p.participantCount || 0), 0);
   const fallbackNames = [
     "Rahul Sharma",
     "Priya Patel",
     "Amit Verma",
     "Sneha Iyer",
-    "Arjun Singh"
+    "Arjun Singh",
+    "Karan Desai",
+    "Megha Chopra",
+    "Rohan Kulkarni",
+    "Isha Malhotra",
+    "Siddharth Jain"
   ];
-
-  const [picnics, setPicnics] = useState<(Picnic & { participantCount?: number })[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [searchTerm, setSearchTerm] = useState('');
-  const total = picnics.reduce((sum, p) => sum + (p.participantCount || 0), 0);
   useEffect(() => {
     fetchPicnics();
+    fetchRegistrations();
   }, []);
 
-  const fetchPicnics = async () => {
+
+  const fetchRegistrations = async () => {
     try {
-      const response = await fetch('/api/picnics/list');
-      const data: PicnicWithNames[] = await response.json();
-      setPicnics(data);
+      const response = await fetch("/api/registrations");
+      const data: any[] = await response.json();
+      setRegistrations(data);
 
-      // Extract last 5 names from all picnics
-      const recentNames = data
-        .flatMap((p) => p.registrations?.map(r => r.name) ?? [])
-        .slice(-5);
+      // Sort registrations newest first
+      const realNames = data
+        .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
+        .map(r => r.name)
+        .slice(0, 5);
 
-      const namesToShow = recentNames.length > 0 ? recentNames : fallbackNames;
+      // Load fake names already shown
+      const shown = JSON.parse(localStorage.getItem("shownFallbackNames") || "[]");
 
-      // Delay 2 seconds before starting interval
-      setTimeout(() => {
-        let index = 0;
+      // How many fakes needed
+      const neededFake = 5 - realNames.length;
 
-        const interval = setInterval(() => {
-          toast.success(`🌈 Recently Registered: ${namesToShow[index]}`, {
-            style: {
-              background: "linear-gradient(to right, #ff00cc, #3333ff, #00e1ff)",
-              color: "white",
-              fontWeight: "bold",
-              borderRadius: "8px",
-            }
-          });
+      // Available fake names not shown earlier
+      const availableFake = fallbackNames.filter(n => !shown.includes(n));
 
-          index++;
+      // Select only required fake names
+      const selectedFake = availableFake.slice(0, neededFake);
 
-          if (index >= namesToShow.length) {
-            clearInterval(interval);
+      // Final list: real first → fake after
+      const namesToShow = [...realNames, ...selectedFake];
+
+      if (namesToShow.length === 0) return;
+
+      let index = 0;
+
+      const interval = setInterval(() => {
+        const name = namesToShow[index];
+
+        toast.success(`🌈 Recently Registered: ${name}`, {
+          style: {
+            background: "linear-gradient(to right, #ff00cc, #3333ff, #00e1ff)",
+            color: "white",
+            fontWeight: "bold",
+            borderRadius: "8px",
           }
-        }, 5000);
+        });
 
-      }, 3000); // wait 2 seconds before starting
+        // Save only fake ones
+        if (!realNames.includes(name)) {
+          const updatedShown = [...shown, name];
+          localStorage.setItem("shownFallbackNames", JSON.stringify(updatedShown));
+        }
+
+        index++;
+        if (index >= namesToShow.length) clearInterval(interval);
+      }, 5000);
 
     } catch (error) {
-      console.error("Error fetching picnics:", error);
+      console.error("Error fetching registrations:", error);
     } finally {
       setLoading(false);
     }
   };
 
-
+  const fetchPicnics = async () => {
+    try {
+      const response = await fetch("/api/picnics/list");
+      const data = await response.json();
+      setPicnics(data);
+    } catch (error) {
+      console.error("Error fetching picnics:", error);
+    }
+  };
 
 
   const filteredPicnics = picnics.filter(picnic =>
@@ -79,7 +112,7 @@ export default function Home() {
 
   return (
     <div className="min-h-screen bg-background">
-      <nav className="border-b border-border sticky top-0 bg-background/95 backdrop-blur">
+      <nav className="border-b border-border sticky top-0 bg-background/95 backdrop-blur z-50">
         <div className="max-w-7xl mx-auto px-4 py-4 flex justify-between items-center">
           <div>
             <h1 className="text-2xl font-bold">Picnic Hub</h1>
