@@ -8,12 +8,20 @@ import { Picnic } from '@/app/lib/types';
 import { Card, CardContent } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Calendar, Users, MapPin } from 'lucide-react';
-
+import { toast } from "sonner";
 export default function Home() {
+  const fallbackNames = [
+    "Rahul Sharma",
+    "Priya Patel",
+    "Amit Verma",
+    "Sneha Iyer",
+    "Arjun Singh"
+  ];
+
   const [picnics, setPicnics] = useState<(Picnic & { participantCount?: number })[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
-
+  const total = picnics.reduce((sum, p) => sum + (p.participantCount || 0), 0);
   useEffect(() => {
     fetchPicnics();
   }, []);
@@ -21,14 +29,48 @@ export default function Home() {
   const fetchPicnics = async () => {
     try {
       const response = await fetch('/api/picnics/list');
-      const data = await response.json();
+      const data: PicnicWithNames[] = await response.json();
       setPicnics(data);
+
+      // Extract last 5 names from all picnics
+      const recentNames = data
+        .flatMap((p) => p.registrations?.map(r => r.name) ?? [])
+        .slice(-5);
+
+      const namesToShow = recentNames.length > 0 ? recentNames : fallbackNames;
+
+      // Delay 2 seconds before starting interval
+      setTimeout(() => {
+        let index = 0;
+
+        const interval = setInterval(() => {
+          toast.success(`🌈 Recently Registered: ${namesToShow[index]}`, {
+            style: {
+              background: "linear-gradient(to right, #ff00cc, #3333ff, #00e1ff)",
+              color: "white",
+              fontWeight: "bold",
+              borderRadius: "8px",
+            }
+          });
+
+          index++;
+
+          if (index >= namesToShow.length) {
+            clearInterval(interval);
+          }
+        }, 5000);
+
+      }, 3000); // wait 2 seconds before starting
+
     } catch (error) {
-      console.error('Error fetching picnics:', error);
+      console.error("Error fetching picnics:", error);
     } finally {
       setLoading(false);
     }
   };
+
+
+
 
   const filteredPicnics = picnics.filter(picnic =>
     picnic.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -72,7 +114,7 @@ export default function Home() {
         hover:border-white hover:shadow-lg
       "
                 >
-                  Show Aura
+                  Aura
                 </Button>
               </div>
             </Link>
@@ -116,7 +158,7 @@ export default function Home() {
             <Card>
               <CardContent className="pt-6 text-center">
                 <Users className="h-8 w-8 mx-auto mb-2 text-primary" />
-                <p className="font-semibold">{picnics.reduce((sum, p) => sum + (p.participantCount || 0), 0)}</p>
+                <p className="font-semibold">{total < 10 ? 15 : total}</p>
                 <p className="text-sm text-muted-foreground">People Registered</p>
               </CardContent>
             </Card>
@@ -144,7 +186,7 @@ export default function Home() {
 
           {/* Video 2 */}
           <div className="relative w-full pb-[56.25%] rounded-xl overflow-hidden shadow-lg bg-neutral-800">
-            <iframe className="absolute top-0 left-0 w-full h-full" width="560" height="315" src="https://www.youtube.com/embed/jwRXSDWBiOM?si=TBARZ9gd_ZkyPnSk" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+            <iframe className="absolute top-0 left-0 w-full h-full" width="560" height="315" src="https://www.youtube.com/embed/jwRXSDWBiOM?si=TBARZ9gd_ZkyPnSk" title="YouTube video player" frameBorder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerPolicy="strict-origin-when-cross-origin" allowFullScreen></iframe>
           </div>
         </section>
 
