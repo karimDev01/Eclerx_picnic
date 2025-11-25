@@ -12,6 +12,7 @@ interface QRCodeGeneratorProps {
 
 export function QRCodeGenerator({ upiId, amount }: QRCodeGeneratorProps) {
   const canvasRef = useRef<HTMLDivElement>(null);
+  const qrLoaded = useRef(false);
   const [error, setError] = useState<string | null>(null);
   const [copied, setCopied] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
@@ -22,56 +23,57 @@ export function QRCodeGenerator({ upiId, amount }: QRCodeGeneratorProps) {
 
   // Detect Mobile device
   useEffect(() => {
-    if (typeof navigator !== 'undefined') {
-      const ua = navigator.userAgent.toLowerCase();
-      const mobile = /android|iphone|ipad|ipod/.test(ua);
-      setIsMobile(mobile);
-    }
+    const ua = navigator.userAgent.toLowerCase();
+    setIsMobile(/android|iphone|ipad|ipod/.test(ua));
   }, []);
 
-  // Generate QR Code
+  // Load QR LIBRARY ONLY ONCE
   useEffect(() => {
-    if (!canvasRef.current) return;
+    if (qrLoaded.current) return;
 
-    const generateQR = async () => {
-      try {
-        setError(null);
-        canvasRef.current!.innerHTML = '';
+    const script = document.createElement('script');
+    script.src = 'https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js';
 
-        const script = document.createElement('script');
-        script.src = 'https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js';
-
-        script.onload = () => {
-          try {
-            new (window as any).QRCode(canvasRef.current, {
-              text: upiString,
-              width: 250,
-              height: 250,
-              colorDark: '#000000',
-              colorLight: '#ffffff',
-              correctLevel: (window as any).QRCode.CorrectLevel.H
-            });
-          } catch (err) {
-            setError('Failed to generate QR code');
-          }
-        };
-
-        script.onerror = () => setError('Failed to load QR code library');
-
-        document.body.appendChild(script);
-
-        return () => {
-          if (document.body.contains(script)) {
-            document.body.removeChild(script);
-          }
-        };
-      } catch {
-        setError('Unexpected error generating QR');
-      }
+    script.onload = () => {
+      qrLoaded.current = true;
+      generateQR();
     };
 
-    generateQR();
-  }, [upiId, amount, upiString]);
+    script.onerror = () => setError('Failed to load QR code library');
+    document.body.appendChild(script);
+
+    return () => {
+      if (document.body.contains(script)) {
+        document.body.removeChild(script);
+      }
+    };
+  }, []);
+
+  // Generate QR only after script is loaded
+  const generateQR = () => {
+    if (!canvasRef.current || !(window as any).QRCode) return;
+
+    setError(null);
+    canvasRef.current.innerHTML = ''; // remove duplicates
+
+    try {
+      new (window as any).QRCode(canvasRef.current, {
+        text: upiString,
+        width: 250,
+        height: 250,
+        colorDark: '#000000',
+        colorLight: '#ffffff',
+        correctLevel: (window as any).QRCode.CorrectLevel.H
+      });
+    } catch (e) {
+      setError('Failed to generate QR code');
+    }
+  };
+
+  // Regenerate QR if amount or upi changes
+  useEffect(() => {
+    if (qrLoaded.current) generateQR();
+  }, [upiId, amount]);
 
   // Copy UPI ID
   const copyToClipboard = async () => {
@@ -91,8 +93,7 @@ export function QRCodeGenerator({ upiId, amount }: QRCodeGeneratorProps) {
     } else if (app === 'paytm') {
       url = `paytm://upi/pay?${params}`;
     } else if (app === 'phonepe') {
-      // PhonePe removed direct deep linking → use standard UPI
-      url = `upi://pay?${params}`;
+      url = `upi://pay?${params}`; // PhonePe doesn't allow deep links anymore
     } else {
       url = `upi://pay?${params}`;
     }
@@ -114,6 +115,7 @@ export function QRCodeGenerator({ upiId, amount }: QRCodeGeneratorProps) {
           </Alert>
         ) : (
           <div className="flex flex-col items-center gap-4">
+
             {/* QR CODE */}
             <div
               ref={canvasRef}
