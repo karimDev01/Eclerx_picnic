@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
+import Link from 'next/link';
 
 export function AdminLogin() {
   const [username, setUsername] = useState('');
@@ -38,7 +39,10 @@ export function AdminLogin() {
   };
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-background">
+    <div className="flex flex-col items-center gap-4 justify-center min-h-screen bg-background">
+      <div>
+        <Link className='border-1 border-neutral-600 p-2 rounded' href={'/'} >Back To Home</Link>
+      </div>
       <Card className="w-full max-w-md">
         <CardHeader>
           <CardTitle>Admin Login</CardTitle>

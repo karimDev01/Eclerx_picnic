@@ -204,24 +204,7 @@ export default function Home() {
             </Card>
           </div>
         </section>
-        <section className="grid grid-cols-1 md:grid-cols-2 gap-6 p-4">
-          {/* Video 1 */}
-          <div className="relative w-full pb-[56.25%] rounded-xl overflow-hidden shadow-lg bg-neutral-800">
-            <iframe
-              className="absolute top-0 left-0 w-full h-full"
-              src="https://www.youtube.com/embed/wDIF7B8KTWg?si=jh-cM3MYUVCGtS8X"
-              title="YouTube video player"
-              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-              referrerPolicy="strict-origin-when-cross-origin"
-              allowFullScreen
-            ></iframe>
-          </div>
-
-          {/* Video 2 */}
-          <div className="relative w-full pb-[56.25%] rounded-xl overflow-hidden shadow-lg bg-neutral-800">
-            <iframe className="absolute top-0 left-0 w-full h-full" width="560" height="315" src="https://www.youtube.com/embed/jwRXSDWBiOM?si=TBARZ9gd_ZkyPnSk" title="YouTube video player" frameBorder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerPolicy="strict-origin-when-cross-origin" allowFullScreen></iframe>
-          </div>
-        </section>
+       
 
         {/* Picnics Grid */}
         {loading ? (
@@ -249,7 +232,24 @@ export default function Home() {
           </div>
         )}
       </main>
+         <section className="grid grid-cols-1 md:grid-cols-2 gap-6 p-4">
+          {/* Video 1 */}
+          <div className="relative w-full pb-[56.25%] rounded-xl overflow-hidden shadow-lg bg-neutral-800">
+            <iframe
+              className="absolute top-0 left-0 w-full h-full"
+              src="https://www.youtube.com/embed/wDIF7B8KTWg?si=jh-cM3MYUVCGtS8X"
+              title="YouTube video player"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+              referrerPolicy="strict-origin-when-cross-origin"
+              allowFullScreen
+            ></iframe>
+          </div>
 
+          {/* Video 2 */}
+          <div className="relative w-full pb-[56.25%] rounded-xl overflow-hidden shadow-lg bg-neutral-800">
+            <iframe className="absolute top-0 left-0 w-full h-full" width="560" height="315" src="https://www.youtube.com/embed/jwRXSDWBiOM?si=TBARZ9gd_ZkyPnSk" title="YouTube video player" frameBorder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerPolicy="strict-origin-when-cross-origin" allowFullScreen></iframe>
+          </div>
+        </section>
       <footer className="border-t border-border bg-background/50 mt-12">
         <div className="max-w-7xl mx-auto px-4 py-8 text-center text-sm text-muted-foreground">
           <p>Picnic Hub - Book your next adventure today!</p>
