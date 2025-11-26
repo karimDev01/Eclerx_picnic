@@ -41,7 +41,7 @@ export function AdminLogin() {
   return (
     <div className="flex flex-col items-center gap-4 justify-center min-h-screen bg-background">
       <div>
-        <Link className='border-1 border-neutral-600 p-2 rounded' href={'/'} >Back To Home</Link>
+        <Link className=' shadow p-2 rounded' href={'/'} >Back To Home</Link>
       </div>
       <Card className="w-full max-w-md">
         <CardHeader>

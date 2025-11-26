@@ -10,6 +10,10 @@ import { RegistrationActions } from '@/components/registration-actions';
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import Link from 'next/link';
+import { toast } from "sonner";
+import { Dialog, DialogTrigger, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 
 export default function PicnicDetailAdmin() {
   const params = useParams();
@@ -40,6 +44,36 @@ export default function PicnicDetailAdmin() {
     }
   };
 
+const handleDelete = async () => {
+  toast.warning("Are you sure you want to delete this picnic?", {
+    action: {
+      label: "Delete",
+      onClick: async () => {
+        try {
+          const res = await fetch(`/api/picnics/delete/${params.id}`, {
+            method: "DELETE",
+          });
+
+          if (res.ok) {
+            toast.success("Picnic deleted successfully!");
+
+            setTimeout(() => {
+              window.location.href = "/admin/dashboard";
+            }, 1000);
+          } else {
+            toast.error("Failed to delete picnic.");
+          }
+        } catch (error) {
+          console.error("Delete error:", error);
+          toast.error("Something went wrong.");
+        }
+      }
+    },
+  });
+};
+
+
+
   const approvedCount = registrations.filter(r => r.status === 'approved').length;
   const pendingCount = registrations.filter(r => r.status === 'pending').length;
   const rejectedCount = registrations.filter(r => r.status === 'rejected').length;
@@ -60,6 +94,92 @@ export default function PicnicDetailAdmin() {
       <main className="max-w-6xl mx-auto px-4 py-12">
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
           <div className="lg:col-span-2">
+            <div className='p-4'>
+              <Dialog>
+  <DialogTrigger>
+    <Button variant="outline" className="mr-3">Edit Picnic</Button>
+  </DialogTrigger>
+
+  <DialogContent className="max-w-lg">
+    <DialogHeader>
+      <DialogTitle>Edit Picnic Details</DialogTitle>
+    </DialogHeader>
+
+    <form
+      onSubmit={async (e) => {
+        e.preventDefault();
+
+        const formData = new FormData(e.target as HTMLFormElement);
+        const body: any = {};
+
+        formData.forEach((value, key) => (body[key] = value));
+
+        const res = await fetch(`/api/picnics/update/${params.id}`, {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(body),
+        });
+
+        if (res.ok) {
+          toast.success("Picnic updated!");
+          fetchData(); // refresh UI
+        } else {
+          toast.error("Error updating picnic");
+        }
+      }}
+      className="space-y-4"
+    >
+      <div>
+        <Label>Title</Label>
+        <Input name="title" defaultValue={picnic.title} />
+      </div>
+
+      <div>
+        <Label>Description</Label>
+        <Input name="description" defaultValue={picnic.description} />
+      </div>
+
+      <div className="grid grid-cols-2 gap-4">
+        <div>
+          <Label>Start Date</Label>
+          <Input type="date" name="startDate" defaultValue={picnic.startDate.split("T")[0]} />
+        </div>
+        <div>
+          <Label>End Date</Label>
+          <Input type="date" name="endDate" defaultValue={picnic.endDate.split("T")[0]} />
+        </div>
+      </div>
+
+      <div className="grid grid-cols-2 gap-4">
+        <div>
+          <Label>Price (₹)</Label>
+          <Input type="number" name="price" defaultValue={picnic.price} />
+        </div>
+        <div>
+          <Label>Max People</Label>
+          <Input type="number" name="maxPeople" defaultValue={picnic.maxPeople} />
+        </div>
+      </div>
+
+      <div>
+        <Label>Registration Deadline</Label>
+        <Input
+          type="date"
+          name="registrationDeadline"
+          defaultValue={picnic.registrationDeadline.split("T")[0]}
+        />
+      </div>
+
+      <Button type="submit" className="w-full">Save Changes</Button>
+    </form>
+  </DialogContent>
+</Dialog>
+
+              <button
+                className='bg-red-500 hover:bg-red-600 transition-all ease-in-out duration-200 text-white p-2 rounded tracking-tight'
+                onClick={handleDelete}
+              >Delete</button>
+            </div>
             <Card>
               <CardHeader>
                 <CardTitle>{picnic.title}</CardTitle>
