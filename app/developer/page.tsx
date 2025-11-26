@@ -53,16 +53,17 @@ function Head() {
         <motion.h1
           className="
           text-5xl md:text-9xl font-extrabold tracking-tight mt-2
-          bg-gradient-to-r from-purple-300 via-blue-300 to-orange-300
+          bg-gradient-to-r from-pink-300 via-pink-400 to-pink-500
           bg-clip-text text-transparent
           animate-gradient-slow
+          animate-pulse
         "
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 0.9, duration: 1.2 }}
         >
-          Azimuddeen Khan{" "}
-          <span className="text-orange-400 animate-pulse">.</span>
+          Azimuddeen Khan 
+          <span className="text-red-500 animate-pulse">{" </> "}.</span>
         </motion.h1>
 
         {/* Social Icons */}
