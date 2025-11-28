@@ -27,7 +27,7 @@ export function QRCodeGenerator({ upiId, amount }: QRCodeGeneratorProps) {
     setIsMobile(/android|iphone|ipad|ipod/.test(ua));
   }, []);
 
-  // Load QR LIBRARY ONLY ONCE
+  // Load QR library only once
   useEffect(() => {
     if (qrLoaded.current) return;
 
@@ -49,12 +49,12 @@ export function QRCodeGenerator({ upiId, amount }: QRCodeGeneratorProps) {
     };
   }, []);
 
-  // Generate QR only after script is loaded
+  // Generate QR
   const generateQR = () => {
     if (!canvasRef.current || !(window as any).QRCode) return;
 
     setError(null);
-    canvasRef.current.innerHTML = ''; // remove duplicates
+    canvasRef.current.innerHTML = ''; // clear previous
 
     try {
       new (window as any).QRCode(canvasRef.current, {
@@ -70,7 +70,6 @@ export function QRCodeGenerator({ upiId, amount }: QRCodeGeneratorProps) {
     }
   };
 
-  // Regenerate QR if amount or upi changes
   useEffect(() => {
     if (qrLoaded.current) generateQR();
   }, [upiId, amount]);
@@ -82,24 +81,11 @@ export function QRCodeGenerator({ upiId, amount }: QRCodeGeneratorProps) {
     setTimeout(() => setCopied(false), 1500);
   };
 
-  // PAYMENT BUTTON HANDLER
-  const payNow = (app: 'gpay' | 'phonepe' | 'paytm' | 'default') => {
-    const params = `pa=${upiId}&pn=Picnic&am=${amount}&cu=INR&tn=Picnic%20Payment`;
-
-    let url = '';
-
-    if (app === 'gpay') {
-      url = `gpay://upi/pay?${params}`;
-    } else if (app === 'paytm') {
-      url = `paytm://upi/pay?${params}`;
-    } else if (app === 'phonepe') {
-      url = `upi://pay?${params}`; // PhonePe doesn't allow deep links anymore
-    } else {
-      url = `upi://pay?${params}`;
-    }
-
-    window.location.href = url;
-  };
+  // PAY BUTTON HANDLER — only GPay & Paytm
+const payNow = () => {
+  const url = `upi://pay?pa=${encodeURIComponent(upiId)}&pn=Picnic&am=${amount}&cu=INR&tn=Picnic%20Payment`;
+  window.location.href = url;
+};
 
   return (
     <Card>
@@ -122,7 +108,7 @@ export function QRCodeGenerator({ upiId, amount }: QRCodeGeneratorProps) {
               className="p-4 bg-white rounded-lg border border-border"
             ></div>
 
-            {/* COPY SECTION */}
+            {/* COPY UPI */}
             <p className="text-sm font-medium flex justify-center items-center gap-2">
               UPI ID: {upiId}
               <button onClick={copyToClipboard} className="p-1 hover:opacity-70">
@@ -133,31 +119,16 @@ export function QRCodeGenerator({ upiId, amount }: QRCodeGeneratorProps) {
 
             <p className="text-sm text-muted-foreground">Amount: ₹{amount}</p>
 
-            {/* MOBILE-ONLY PAYMENT BUTTONS */}
+            {/* ONLY GPay + Paytm BUTTONS */}
             {isMobile && (
-              <div className="flex flex-col gap-3 w-full">
-                <button
-                  onClick={() => payNow('gpay')}
-                  className="w-full py-2 rounded-lg bg-blue-600 text-white text-sm font-medium"
-                >
-                  Pay with Google Pay
-                </button>
-
-                <button
-                  onClick={() => payNow('phonepe')}
-                  className="w-full py-2 rounded-lg bg-violet-600 text-white text-sm font-medium"
-                >
-                  Pay with PhonePe
-                </button>
-
-                <button
-                  onClick={() => payNow('paytm')}
-                  className="w-full py-2 rounded-lg bg-cyan-600 text-white text-sm font-medium"
-                >
-                  Pay with Paytm
-                </button>
-              </div>
+              <button
+                onClick={payNow}
+                className="w-full py-2 rounded-lg bg-blue-600 text-white text-sm font-medium"
+              >
+                Pay using UPI App
+              </button>
             )}
+
           </div>
         )}
       </CardContent>
